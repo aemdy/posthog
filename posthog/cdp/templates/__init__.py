@@ -42,6 +42,7 @@ from .google_cloud_storage.template_google_cloud_storage import (
 )
 from .airtable.template_airtable import template as airtable
 from .brevo.template_brevo import template as brevo
+from .cust.template_cust import template as cust
 from ._siteapps.template_early_access_features import template as early_access_features
 from ._siteapps.template_hogdesk import template as hogdesk
 from ._siteapps.template_notification_bar import template as notification_bar
@@ -69,6 +70,7 @@ HOG_FUNCTION_TEMPLATES = [
     braze,
     brevo,
     clearbit,
+    cust,
     customerio,
     discord,
     engage,
