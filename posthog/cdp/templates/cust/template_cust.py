@@ -24,7 +24,7 @@ let context := {
     'device': {},
     'library': {},
     'os': {},
-    'page',
+    'page': {},
     'screen': {}
 }
 
@@ -137,7 +137,7 @@ if (res.status >= 400) {
             "key": "company_group",
             "type": "string",
             "label": "PostHog company group",
-            "description": "A Posthog group representing Cust company.",
+            "description": "A Posthog group representing Cust Company.",
             "secret": False,
             "required": False,
         },

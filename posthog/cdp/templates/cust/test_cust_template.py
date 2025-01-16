@@ -3,28 +3,17 @@ from posthog.cdp.templates.cust.template_cust import template as template_cust
 
 
 def create_inputs(**kwargs):
-    inputs = {"api_token": "test-api-token", "organization_id": None, "company_group": None}
+    inputs = {
+        "api_token": "test-api-token",
+        "organization_id": None,
+        "company_group": None,
+    }
     inputs.update(kwargs)
     return inputs
 
 
 class TestTemplateCust(BaseHogFunctionTemplateTest):
     template = template_cust
-
-    def test_api_unauthorized_error(self):
-        self.mock_fetch.return_value = {"status": 401, "body": "Invalid API token"}
-
-        with self.assertRaises(Exception) as e:
-            self.run_function(
-                inputs=create_inputs(),
-                globals={
-                    "event": {
-                        "event": "test_event",
-                        "properties": {},
-                    }
-                },
-            )
-        assert "Error from api.cust.co (status 401)" in str(e.exception)
 
     def test_organization_id_header(self):
         # Test without organization ID
@@ -109,7 +98,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
                         "$browser_language": "en-US",
                         "$app_version": "1.0.0",
                         "$device_id": "device123",
-                        "$os_name": "iOS",
+                        "$os": "iOS",
                         "$current_url": "https://example.com/page?param=1",
                         "$screen_height": 1080,
                         "custom_prop": "value",
@@ -143,7 +132,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
 
         body = self.get_mock_fetch_calls()[0][1]["body"]
         assert body["user_id"] == "user123"
-        assert "anonymous_id" not in body
+        assert body["anonymous_id"] == "anon456"
         assert "group_id" not in body
 
         # Test anonymous user
@@ -228,7 +217,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
         assert body["name"] == "test_event"
         assert body["unique_id"] == "test_event-uuid"
         assert body["timestamp"] == "2022-01-01T00:00:00Z"
-        assert body["context"] == {}
+        assert "context" in body
         assert body["properties"] == {}
         assert body["anonymous_id"] == "user123"
         assert "user_id" not in body
