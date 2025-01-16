@@ -2175,6 +2175,7 @@ export interface LLMGeneration {
     totalCost?: number
     httpStatus?: number
     baseUrl?: string
+    modelParameters?: Record<string, any>
 }
 
 // Snake-case here for the DataTable component.
