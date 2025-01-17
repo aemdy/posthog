@@ -6,7 +6,7 @@ def create_inputs(**kwargs):
     inputs = {
         "api_token": "test-api-token",
         "organization_id": None,
-        "company_group": None,
+        "company_group_type": None,
     }
     inputs.update(kwargs)
     return inputs
@@ -27,11 +27,11 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
             },
         )
 
-        assert "HTTP_X_ORGANIZATION_ID" not in self.get_mock_fetch_calls()[0][1]["headers"]
+        assert "X-Organization-Id" not in self.get_mock_fetch_calls()[0][1]["headers"]
 
         # Test with organization ID
         self.run_function(
-            inputs=create_inputs(organization_id=12345),
+            inputs=create_inputs(organization_id="12345"),
             globals={
                 "event": {
                     "event": "test_event",
@@ -40,7 +40,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
             },
         )
 
-        assert self.get_mock_fetch_calls()[0][1]["headers"]["HTTP_X_ORGANIZATION_ID"] == 12345
+        assert self.get_mock_fetch_calls()[0][1]["headers"]["X-Organization-Id"] == "12345"
 
     def test_event_filtering(self):
         events_to_test = [
@@ -150,7 +150,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
     def test_group_identification(self):
         # Test with group setting and matching group property
         self.run_function(
-            inputs=create_inputs(company_group="company"),
+            inputs=create_inputs(company_group_type="company"),
             globals={
                 "event": {
                     "event": "test_event",
@@ -164,7 +164,7 @@ class TestTemplateCust(BaseHogFunctionTemplateTest):
 
         # Test with group setting but no matching group property
         self.run_function(
-            inputs=create_inputs(company_group="company"),
+            inputs=create_inputs(company_group_type="company"),
             globals={
                 "event": {
                     "event": "test_event",

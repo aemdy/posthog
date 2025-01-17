@@ -78,12 +78,12 @@ for (let key, value in event.properties) {
 }
 
 let headers := {
-    'Authorization': f'Bearer {inputs.api_token}',
+    'Authorization': f'Token {inputs.api_token}',
     'Content-Type': 'application/json'
 }
 
 if (not empty(inputs.organization_id)) {
-    headers['HTTP_X_ORGANIZATION_ID'] := inputs.organization_id
+    headers['X-Organization-Id'] := inputs.organization_id
 }
 
 let body := {
@@ -100,14 +100,14 @@ if (event.properties.$is_identified) {
     if (not empty(event.properties.$anon_distinct_id)) {
         body.anonymous_id := event.properties.$anon_distinct_id
     }
-    if (not empty(event.properties.$groups) and not empty(inputs.company_group) and not empty(event.properties.$groups[inputs.company_group])) {
-        body.group_id := event.properties.$groups[inputs.company_group]
+    if (not empty(event.properties.$groups) and not empty(inputs.company_group_type) and not empty(event.properties.$groups[inputs.company_group_type])) {
+        body.group_id := event.properties.$groups[inputs.company_group_type]
     }
 } else {
     body.anonymous_id := event.distinct_id
 }
 
-let res := fetch(f'https://api.cust.co/events/', {
+let res := fetch('https://api.cust.co/events/', {
     'method': 'POST',
     'headers': headers,
     'body': body
@@ -122,22 +122,23 @@ if (res.status >= 400) {
             "key": "api_token",
             "type": "string",
             "label": "Cust API token",
+            "description": "You can create an API token here: https://app.cust.co/integrations/api/",
             "secret": True,
             "required": True,
         },
         {
             "key": "organization_id",
-            "type": "number",
+            "type": "string",
             "label": "Cust organization ID",
-            "description": "An ID of your Cust organization. If not provided, defaults to the organization ID of the API token.",
+            "description": "An ID of your Cust organization. If not provided, defaults to the organization ID of the API token. You can find your organization ID here: https://app.cust.co/switch-organization",
             "secret": False,
             "required": False,
         },
         {
-            "key": "company_group",
+            "key": "company_group_type",
             "type": "string",
-            "label": "PostHog company group",
-            "description": "A Posthog group representing Cust Company.",
+            "label": "PostHog company group type",
+            "description": "A Posthog group type representing a Company in Cust.",
             "secret": False,
             "required": False,
         },
